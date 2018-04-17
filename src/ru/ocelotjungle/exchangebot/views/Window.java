@@ -5,33 +5,36 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Toolkit;
 
+import javax.swing.AbstractListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import ru.ocelotjungle.exchangebot.common.ChainInitializer;
+import ru.ocelotjungle.exchangebot.common.Utils;
 
-import javax.swing.AbstractListModel;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 @SuppressWarnings({ "serial", "rawtypes"})
 public class Window extends JFrame {
 
 	private JPanel contentPane;
-	public JTextField tfCount;
-	public JTextField tfFee;
-	public JList listChains;
-	public JList listBalances;
+	private static Window instance;
+	public JButton btnReloadList, btnReloadInfo, btnMakeProfit;
+	public JToggleButton tglbtnForAll;
+	public JTextField exchangeSize;
+	public JList chainList, balanceList, limitList;
+	public JTextArea debugInfo;
 
 	/**
 	 * Launch the application.
@@ -48,14 +51,18 @@ public class Window extends JFrame {
 			}
 		});
 	}
+	
+	public static Window getInstance() {
+		return instance;
+	}
 
 	/**
 	 * Create the frame.
 	 */
 	public Window() {
+		instance = this;
 		initComponents();
 		createEvents();
-		ChainInitializer.initialize(this);;
 	}
 
 	/**
@@ -67,23 +74,20 @@ public class Window extends JFrame {
 		setTitle("Yobit Profit Bot");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Window.class.getResource("/ru/ocelotjungle/exchangebot/resources/yobit.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 470, 300);
+		setBounds(100, 100, 550, 370);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
-		listChains = new JList();
-		listChains.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		listChains.setFont(new Font("Arial", Font.BOLD, 12));
-		listChains.setBorder(new LineBorder(new Color(0, 0, 0)));
+		chainList = new JList();
+		chainList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		chainList.setToolTipText("");
+		chainList.setBorder(new LineBorder(new Color(0, 0, 0)));
 		
-		listBalances = new JList();
-		listBalances.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		listBalances.setToolTipText("");
-		listBalances.setFont(new Font("Arial", Font.ITALIC, 12));
-		listBalances.setBorder(new LineBorder(new Color(0, 0, 0)));
-		listBalances.setModel(new AbstractListModel() {
-			String[] values = new String[] {"  0.00000000B", "  0.00000000E", "  0.00000000D", "  0.00000000W", "  0.00000000$", "  0.00000000₽"};
+		balanceList = new JList();
+		balanceList.setFont(new Font("Tahoma", Font.BOLD, 16));
+		balanceList.setModel(new AbstractListModel() {
+			String[] values = new String[] {"0.00000000B", "0.00000000E", "0.00000000D", "0.00000000W", "0.00000000$", "0.00000000₽"};
 			public int getSize() {
 				return values.length;
 			}
@@ -91,74 +95,94 @@ public class Window extends JFrame {
 				return values[index];
 			}
 		});
-		listBalances.setVisibleRowCount(6);
+		balanceList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		balanceList.setVisibleRowCount(6);
+		balanceList.setToolTipText("");
+		balanceList.setBorder(new LineBorder(new Color(0, 0, 0)));
 		
-		JButton btnRefresh = new JButton("Refresh");
+		limitList = new JList();
+		limitList.setBorder(new LineBorder(new Color(0, 0, 0)));
 		
-		JButton btnReload = new JButton("Reload");
-		
-		JButton btnDoProfit = new JButton("Do profit");
-		btnDoProfit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		btnReloadList = new JButton("Reload list");
+		btnReloadList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				Utils.buttonReloadListClick();
 			}
 		});
 		
-		tfCount = new JTextField();
-		tfCount.setColumns(10);
+		btnReloadInfo = new JButton("Reload info");
+		btnReloadInfo.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				Utils.buttonReloadInfoClick();
+			}
+		});
 		
-		JButton btnForAll = new JButton("For all");
+		exchangeSize = new JTextField();
+		exchangeSize.setBorder(new LineBorder(new Color(0, 0, 0)));
+		exchangeSize.setFont(new Font("Tahoma", Font.BOLD, 12));
+		exchangeSize.setColumns(10);
 		
-		JLabel lblFee = new JLabel("Fee:");
+		btnMakeProfit = new JButton("Make profit");
+		btnMakeProfit.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Utils.buttonMakeProfitClick(tglbtnForAll.isSelected());
+			}
+		});
 		
-		tfFee = new JTextField();
-		tfFee.setColumns(10);
+		debugInfo = new JTextArea();
+		debugInfo.setLineWrap(true);
+		debugInfo.setBorder(new LineBorder(new Color(0, 0, 0)));
+		
+		tglbtnForAll = new JToggleButton("For all");
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
+			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(listChains, GroupLayout.PREFERRED_SIZE, 269, GroupLayout.PREFERRED_SIZE)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(chainList, GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+									.addComponent(exchangeSize)
+									.addGroup(gl_contentPane.createSequentialGroup()
+										.addComponent(btnReloadList)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(btnReloadInfo)))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(btnMakeProfit)
+									.addGap(18)
+									.addComponent(tglbtnForAll)))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(debugInfo, GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-							.addComponent(btnRefresh)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnReload))
-						.addComponent(listBalances, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
-						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-							.addComponent(btnDoProfit)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnForAll))
-						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-							.addComponent(lblFee)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(tfFee, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addComponent(tfCount, GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE))
-					.addContainerGap())
+						.addComponent(limitList, GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
+						.addComponent(balanceList, GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(listChains, GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)
+					.addComponent(balanceList)
+					.addGap(7)
+					.addComponent(limitList, GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE))
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addComponent(chainList, GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(listBalances)
-							.addGap(14)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(btnDoProfit)
-								.addComponent(btnForAll))
-							.addGap(9)
-							.addComponent(tfCount, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addGap(13)
+								.addComponent(btnReloadList)
+								.addComponent(btnReloadInfo))
+							.addGap(30)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblFee)
-								.addComponent(tfFee, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(btnRefresh)
-								.addComponent(btnReload))))
-					.addContainerGap())
+								.addComponent(btnMakeProfit)
+								.addComponent(tglbtnForAll))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(exchangeSize, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE))
+						.addComponent(debugInfo)))
 		);
 		contentPane.setLayout(gl_contentPane);
 

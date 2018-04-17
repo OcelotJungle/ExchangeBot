@@ -1,26 +1,27 @@
 package ru.ocelotjungle.exchangebot.common;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
-import ru.ocelotjungle.exchangebot.views.Window;
+import ru.ocelotjungle.exchangebot.common.Chain;
 
 public class ChainInitializer {
-	
-	@SuppressWarnings("unchecked")
-	public static void initialize(Window window) {
-		try {
-			Object[] chains = getChainList();
-			window.listChains.setListData(chains);
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}
+	public static Chain getChain(String currencyString) {
+		return new Chain(currencyString);
 	}
 	
-	public static Object[] getChainList() throws IOException {
-		Object[] chains = Files.readAllLines(Paths.get("./chains.txt"), StandardCharsets.UTF_8).toArray();
+	public static ArrayList<Chain> getAllChainsFromFile(File chainsFile) throws IOException {
+		ArrayList<Chain> chains = new ArrayList<>();
+		for(String line : Files.readAllLines(Paths.get(chainsFile.getPath(), chainsFile.getName()))) {
+			chains.add(getChain(line));
+		}
 		return chains;
+	}
+	
+	public static ArrayList<Chain> getChainList() throws IOException {
+		return getAllChainsFromFile(new File("chains.txt"));
 	}
 }
