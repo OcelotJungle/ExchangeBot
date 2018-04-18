@@ -15,7 +15,7 @@ public class ChainInitializer {
 	
 	public static ArrayList<Chain> getAllChainsFromFile(File chainsFile) throws IOException {
 		ArrayList<Chain> chains = new ArrayList<>();
-		for(String line : Files.readAllLines(Paths.get(chainsFile.getPath(), chainsFile.getName()))) {
+		for(String line : Files.readAllLines(Paths.get(chainsFile.getAbsolutePath()))) {
 			chains.add(getChain(line));
 		}
 		return chains;

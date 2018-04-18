@@ -35,9 +35,10 @@ public class Printer {
 	
 	public void printDebugInfo(Object debugInfo) {
 		if(debugInfo instanceof Exception) {
-			window.debugInfo.setText(((Exception)debugInfo).getMessage());
+			((Exception) debugInfo).printStackTrace();
+			//window.debugInfo.setText(((Exception)debugInfo).get);
 		} else {
-			window.debugInfo.setText(debugInfo.toString());
+			window.debugInfo.append("[" + System.currentTimeMillis() + "] " + debugInfo.toString() + "\n");
 		}
 	}
 }

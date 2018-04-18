@@ -1,7 +1,7 @@
 package ru.ocelotjungle.exchangebot.common;
 
 public enum MainCurrency {
-	BTC(6, 'B'), ETH(5, 'E'), DOGE(4, 'D'), WAVES(3, 'W'), USD(2, '$'), RUR(1, '₽');
+	BTC(4, 'B'), ETH(3, 'E'), DOGE(1, 'D'), WAVES(2, 'W'), USD(5, '$'), RUR(6, '₽');
 	
 	private int priority;
 	private char symbol;

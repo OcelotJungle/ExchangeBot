@@ -11,8 +11,7 @@ public class Utils {
 		Printer.getInstance().printDebugInfo("Pressed button Reload Info");
 	}
 	
-	public static void buttonMakeProfitClick(boolean isButtonForAllEnabled) {
-		ExchangeBot.getInstance().doExchange(isButtonForAllEnabled);
-		Printer.getInstance().printDebugInfo("Pressed button Make Profit with " + (isButtonForAllEnabled ? "enabled" : "disabled") + " button For All");
+	public static void buttonMakeProfitClick(String value, boolean isButtonForAllEnabled) {
+		ExchangeBot.getInstance().doExchange((long) Math.floor(Double.parseDouble(value.replaceFirst("", "0").replaceAll("[^0-9.]", "")) * 10e8), isButtonForAllEnabled);
 	}
 }

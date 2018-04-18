@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.AbstractListModel;
 import javax.swing.GroupLayout;
@@ -21,9 +23,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import ru.ocelotjungle.exchangebot.common.Utils;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 @SuppressWarnings({ "serial", "rawtypes"})
 public class Window extends JFrame {
@@ -128,12 +127,15 @@ public class Window extends JFrame {
 		btnMakeProfit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				Utils.buttonMakeProfitClick(tglbtnForAll.isSelected());
+				Utils.buttonMakeProfitClick(exchangeSize.getText(), tglbtnForAll.isSelected());
 			}
 		});
 		
 		debugInfo = new JTextArea();
+		debugInfo.setWrapStyleWord(true);
 		debugInfo.setLineWrap(true);
+		debugInfo.setFont(new Font("Monospaced", Font.PLAIN, 11));
+		debugInfo.setEditable(false);
 		debugInfo.setBorder(new LineBorder(new Color(0, 0, 0)));
 		
 		tglbtnForAll = new JToggleButton("For all");
@@ -142,7 +144,7 @@ public class Window extends JFrame {
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(chainList, GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
+						.addComponent(chainList, GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
@@ -156,11 +158,11 @@ public class Window extends JFrame {
 									.addGap(18)
 									.addComponent(tglbtnForAll)))
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(debugInfo, GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)))
+							.addComponent(debugInfo, GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(limitList, GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
-						.addComponent(balanceList, GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)))
+						.addComponent(limitList, GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
+						.addComponent(balanceList, GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -171,7 +173,7 @@ public class Window extends JFrame {
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addComponent(chainList, GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(btnReloadList)
