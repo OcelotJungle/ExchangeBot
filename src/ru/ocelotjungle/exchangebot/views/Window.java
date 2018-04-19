@@ -132,9 +132,8 @@ public class Window extends JFrame {
 		});
 		
 		debugInfo = new JTextArea();
-		debugInfo.setWrapStyleWord(true);
 		debugInfo.setLineWrap(true);
-		debugInfo.setFont(new Font("Monospaced", Font.PLAIN, 11));
+		debugInfo.setFont(new Font("Arial", Font.PLAIN, 8));
 		debugInfo.setEditable(false);
 		debugInfo.setBorder(new LineBorder(new Color(0, 0, 0)));
 		

@@ -9,16 +9,40 @@ import java.util.ArrayList;
 import ru.ocelotjungle.exchangebot.common.Chain;
 
 public class ChainInitializer {
-	public static Chain getChain(String currencyString) {
-		return new Chain(currencyString);
+	public static Chain getChain(String[] currencies) {
+		return new Chain(currencies);
+	}
+	
+	public static String[] verifyChain(String currenciesString) throws IllegalArgumentException {
+		String[] currencies = currenciesString.toLowerCase().replaceAll("[^a-z0-9,]", "").split(",");
+		if (currencies.length > 2) {
+			for (String currency : currencies) {
+				if (currency.length() <= 0) {
+					throw new IllegalArgumentException("Wrong currency in the chain.");
+				}
+			}
+			return currencies;
+		} else {
+			throw new IllegalArgumentException("Currencies count is too small.");
+		}
 	}
 	
 	public static ArrayList<Chain> getAllChainsFromFile(File chainsFile) throws IOException {
 		ArrayList<Chain> chains = new ArrayList<>();
-		for(String line : Files.readAllLines(Paths.get(chainsFile.getAbsolutePath()))) {
-			chains.add(getChain(line));
+		for (String line : Files.readAllLines(Paths.get(chainsFile.getAbsolutePath()))) {
+			try {
+				String[] verifiedChain = verifyChain(line);
+				chains.add(getChain(verifiedChain));
+				chains.add(getChain(Utils.getInvertedArray(verifiedChain)));
+			} catch (IllegalArgumentException iae) {
+				
+			}
 		}
-		return chains;
+		if(chains.size() > 0) {
+			return chains;
+		} else {
+			throw new IOException("Chains file is empty.");
+		}
 	}
 	
 	public static ArrayList<Chain> getChainList() throws IOException {

@@ -7,13 +7,14 @@ import java.util.LinkedHashMap;
 
 import ru.ocelotjungle.exchangebot.common.Chain;
 import ru.ocelotjungle.exchangebot.views.Window;
+import sun.awt.image.BufferedImageDevice;
 
 @SuppressWarnings("unused")
 public class ExchangeBot {
 	private static ExchangeBot instance;
 	private Printer printer;
 	private ArrayList<Chain> bufferedChains;
-	private HashMap<Double, Chain> visibleChains;
+	private LinkedHashMap<Chain, Double> visibleChains;
 	private LinkedHashMap<MainCurrency, Long> balanceList;
 	
 	private ExchangeBot() {
@@ -27,20 +28,23 @@ public class ExchangeBot {
 		return instance;
 	}
 	
-	public void reloadBufferedChains() {
+	public void reloadList() {
 		try {
 			bufferedChains = ChainInitializer.getChainList();
+			printer.printDebugInfo("Buffered chains reloaded.");
 		} catch (IOException ioe) { printer.printDebugInfo(ioe);}
 	}
 	
-	public void reloadVisibleChains() {
+	public void reloadInfo() {
+		visibleChains = new LinkedHashMap<Chain, Double>();
 		for(Chain chain : bufferedChains) {
-			HashMap<Double, Chain> visibleChains = new HashMap<Double, Chain>(bufferedChains.size());
-			visibleChains.put(WebInteractor.getInstance().calcProfit(chain), chain);
+			visibleChains.put(chain, WebInteractor.getInstance().calcProfit(chain));
 		}
+		printer.printChainList(visibleChains);
+		printer.printBalanceList(WebInteractor.getInstance().getBalanceList());
 	}
 	
-	public void doExchange(long value, boolean isButtonForAllEnabled) {
+	public void makeProfit(long value, boolean isButtonForAllEnabled) {
 		try {
 			WebInteractor.getInstance().test();
 		} catch (IOException ioe) { 
