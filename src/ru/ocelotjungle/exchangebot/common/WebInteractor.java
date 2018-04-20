@@ -13,13 +13,12 @@ public class WebInteractor {
 	public static WebInteractor getInstance() {
 		if(instance == null) {
 			instance = new WebInteractor();
+			System.setProperty("http.agent", "Chrome");
 		}
 		return instance;
 	}
 	
 	public void test() throws IOException {
-		System.setProperty("http.agent", "Chrome");
-		
 		String url = "https://yobit.net/api/3/depth/ltc_btc?limit=1";
 		HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 
@@ -44,8 +43,13 @@ public class WebInteractor {
 		return new Double(profit);
 	}
 
+	@SuppressWarnings("unused")
 	public LinkedHashMap<MainCurrency, Long> getBalanceList() {
+		LinkedHashMap<MainCurrency, Long> balanceList = new LinkedHashMap<MainCurrency, Long>();
+
+		StringBuilder url = new StringBuilder("https://yobit.net/tapi/");
 		
-		return null;
+		
+		return balanceList;
 	}
 }
