@@ -18,4 +18,13 @@ public enum MainCurrency {
 	public char getSymbol() {
 		return symbol;
 	}
+	
+	public static boolean exist(String currency) {
+		try {
+			MainCurrency.valueOf(currency.toUpperCase());
+			return true;
+		} catch (IllegalArgumentException iae) {
+			return false;
+		}
+	}
 }

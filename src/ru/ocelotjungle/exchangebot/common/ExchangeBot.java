@@ -1,5 +1,6 @@
 package ru.ocelotjungle.exchangebot.common;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import sun.awt.image.BufferedImageDevice;
 @SuppressWarnings("unused")
 public class ExchangeBot {
 	private static ExchangeBot instance;
+	private Configurator configurator;
 	private Printer printer;
 	private ArrayList<Chain> bufferedChains;
 	private LinkedHashMap<Chain, Double> visibleChains;
@@ -19,6 +21,11 @@ public class ExchangeBot {
 	
 	private ExchangeBot() {
 		printer = Printer.getInstance();
+		try {
+			configurator = Configurator.getInstance();
+		} catch (IOException ioe) {
+			printer.printDebugInfo(ioe);
+		}
 	}
 	
 	public static ExchangeBot getInstance() {
@@ -32,16 +39,19 @@ public class ExchangeBot {
 		try {
 			bufferedChains = ChainInitializer.getChainList();
 			printer.printDebugInfo("Buffered chains reloaded.");
-		} catch (IOException ioe) { printer.printDebugInfo(ioe);}
+		} catch (IOException ioe) { printer.printDebugInfo("Chains file is empty");}
 	}
 	
 	public void reloadInfo() {
-		visibleChains = new LinkedHashMap<Chain, Double>();
-		for(Chain chain : bufferedChains) {
-			visibleChains.put(chain, WebInteractor.getInstance().calcProfit(chain));
+		if (bufferedChains != null) {
+			visibleChains = new LinkedHashMap<Chain, Double>();
+			for(Chain chain : bufferedChains) {
+				visibleChains.put(chain, WebInteractor.getInstance().calcProfit(chain));
+			}
+			printer.printChainList(visibleChains);
 		}
-		printer.printChainList(visibleChains);
-		printer.printBalanceList(WebInteractor.getInstance().getBalanceList());
+		
+		//printer.printBalanceList(WebInteractor.getInstance().getBalanceList());
 	}
 	
 	public void makeProfit(long value, boolean isButtonForAllEnabled) {

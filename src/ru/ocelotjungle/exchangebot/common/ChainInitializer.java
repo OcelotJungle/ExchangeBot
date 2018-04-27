@@ -16,9 +16,18 @@ public class ChainInitializer {
 	public static String[] verifyChain(String currenciesString) throws IllegalArgumentException {
 		String[] currencies = currenciesString.toLowerCase().replaceAll("[^a-z0-9,]", "").split(",");
 		if (currencies.length > 2) {
+			boolean isLastCurrencyMain = false;
 			for (String currency : currencies) {
 				if (currency.length() <= 0) {
 					throw new IllegalArgumentException("Wrong currency in the chain.");
+				} else if (MainCurrency.exist(currency)) {
+					isLastCurrencyMain = true;
+				} else {
+					if (isLastCurrencyMain) {
+						isLastCurrencyMain = false;
+					} else {
+						throw new IllegalArgumentException("Currencies are in wrong order.");
+					}
 				}
 			}
 			return currencies;
@@ -34,9 +43,7 @@ public class ChainInitializer {
 				String[] verifiedChain = verifyChain(line);
 				chains.add(getChain(verifiedChain));
 				chains.add(getChain(Utils.getInvertedArray(verifiedChain)));
-			} catch (IllegalArgumentException iae) {
-				
-			}
+			} catch(IllegalArgumentException iae) {}
 		}
 		if(chains.size() > 0) {
 			return chains;
@@ -46,6 +53,6 @@ public class ChainInitializer {
 	}
 	
 	public static ArrayList<Chain> getChainList() throws IOException {
-		return getAllChainsFromFile(new File("chains.txt"));
+		return getAllChainsFromFile(new File(Configurator.getInstance().getChainsFileName()));
 	}
 }
