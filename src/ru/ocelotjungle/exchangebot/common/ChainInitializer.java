@@ -20,7 +20,7 @@ public class ChainInitializer {
 			for (String currency : currencies) {
 				if (currency.length() <= 0) {
 					throw new IllegalArgumentException("Wrong currency in the chain.");
-				} else if (MainCurrency.exist(currency)) {
+				} else if (MainCurrency.getPriority(currency) > 0) {
 					isLastCurrencyMain = true;
 				} else {
 					if (isLastCurrencyMain) {

@@ -11,20 +11,19 @@ public enum MainCurrency {
 		this.symbol = symbol;
 	}
 	
-	public int getPriority() {
-		return priority;
-	}
-	
 	public char getSymbol() {
 		return symbol;
 	}
 	
-	public static boolean exist(String currency) {
+	public static int getPriority(String currency) {
 		try {
-			MainCurrency.valueOf(currency.toUpperCase());
-			return true;
+			return MainCurrency.valueOf(currency.toUpperCase()).priority;
 		} catch (IllegalArgumentException iae) {
-			return false;
+			return 0;
 		}
+	}
+	
+	public static boolean isFirstCurrencyMain(String[] currencies) {
+		return (getPriority(currencies[0]) >= getPriority(currencies[1])) ? true : false;
 	}
 }
